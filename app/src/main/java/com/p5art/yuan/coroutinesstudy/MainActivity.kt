@@ -182,21 +182,34 @@ class MainActivity : AppCompatActivity() {
             println("1")
         }
 
+        /**
+         * the following code shows that creating a large amount of coroutines is not a problem
+         * (whereas creating as many threads would definitely be problematic)
+         * because coroutines are light-weight
+         *
+         * Through the thread id and name being logged we can see, all the jobs launched are
+         * actually put on the main thread, if "launch{}" is called.
+         *
+         * However, if "GlobalScope.launch {}" is called, then the job launched are put onto
+         * different threads (from a thread pool?)
+         */
         btManyCoroutines.setOnClickListener {
-            println("h")
-
             runBlocking {
                 var i = 0
-                repeat(100_000) {
+                repeat(1000) {
                     // launch a lot of coroutines
-                    launch {
+                    GlobalScope.launch {
                         val de = (Math.random() * 1000).toLong()
-                        println("delay = $de")
+                        logt(TAG, "delay = $de")
                         delay(de)
-                        println(i++)
+                        logt(TAG, (i++).toString())
                     }
                 }
             }
         }
+
+
+
+
     }
 }
